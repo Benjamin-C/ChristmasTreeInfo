@@ -1,5 +1,8 @@
 package christmastreeinfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 	
 	@SuppressWarnings("unused")
@@ -7,11 +10,17 @@ public class Main {
 		Customer ben = new Customer("Benjamin Crall"); 
 		System.out.println(ben.toString());
 		ben.set(DataType.PHONE_NUMBER, "123-456-7890");
-		System.out.println(ben.get(DataType.PHONE_NUMBER));
 		ben.set(DataType.ADDRESS, "1234 South Street Wy NW");
+		System.out.println(ben.get(DataType.PHONE_NUMBER));
 		System.out.println(ben.get(DataType.ADDRESS));
-		
-		DataInputWindow dw = new DataInputWindow(ben);
+		List<Customer> cal = new ArrayList<Customer>();
+		cal.add(ben);
+		for(int i = 0; i < 74; i++) {
+			cal.add(Customer.getRandomCustomer());
+		}
+		WaitingRoom.addAll(cal);
+		CustomerSelectionWindow csw = new CustomerSelectionWindow();
+		//DataInputWindow dw = new DataInputWindow(ben);
 				
 	}
 

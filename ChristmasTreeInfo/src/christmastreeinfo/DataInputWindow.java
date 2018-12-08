@@ -58,7 +58,7 @@ public class DataInputWindow extends JFrame {
 			cst = new Customer("John Doe");
 		}
 		this.setTitle(cst.get(DataType.NAME));
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dataMap = new HashMap<DataType, JTextArea>();
 		this.dates = dates;
 		this.times = times;
@@ -78,6 +78,7 @@ public class DataInputWindow extends JFrame {
 		
 		master.setLayout(new BoxLayout(master, BoxLayout.Y_AXIS));
 		
+		addTextZone(DataType.UUID);
 		addTextZone(DataType.NAME);
 		addTextZone(DataType.PHONE_NUMBER);
 		addTextZone(DataType.EMAIL_ADDRESS);
@@ -174,12 +175,19 @@ public class DataInputWindow extends JFrame {
 	}
 	
 	private void startEditing() {
-		setEditable(true);
-				saveButton.setEnabled(true);
-				sceduleButton.setEnabled(false);
-				editButton.setEnabled(false);
+		System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
+		if(!cst.get(DataType.DATA_EDIT_LOCKED).equals(Keys.TRUE)) {
+			cst.set(DataType.DATA_EDIT_LOCKED, Keys.TRUE);
+			System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
+			setEditable(true);
+			saveButton.setEnabled(true);
+			sceduleButton.setEnabled(false);
+			editButton.setEnabled(false);
+		}
 	}
 	private void endEditing() {
+		System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
+		cst.set(DataType.DATA_EDIT_LOCKED, Keys.FALSE);
 		setEditable(false);
 		editButton.setEnabled(true);
 		sceduleButton.setEnabled(true);
