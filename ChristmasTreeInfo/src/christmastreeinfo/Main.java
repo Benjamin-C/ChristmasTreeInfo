@@ -1,8 +1,8 @@
 package christmastreeinfo;
 
-import javax.swing.JFrame;
-
 public class Main {
+	
+	@SuppressWarnings("unused")
 	public static void main(String args[]) {
 		Customer ben = new Customer("Benjamin Crall"); 
 		System.out.println(ben.toString());

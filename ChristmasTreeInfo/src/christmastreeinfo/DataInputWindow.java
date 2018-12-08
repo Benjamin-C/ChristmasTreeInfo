@@ -4,14 +4,11 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
+import java.util.Map;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -24,15 +21,9 @@ public class DataInputWindow extends JFrame {
 
 	// Customer data
 	Customer cst;
-	//private String name = "Someone Important";
-	
-	//private String phone = "123-456-7890";
-	//private String email = "example@example.com";
 		
 	private String dates[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
 	private String times[] = {"0", "1"};
-	
-	//private String address[] = {"123 St Wy Se" ,"City, State"};
 	
 	// JPanel stuffs
 	private JPanel master = new JPanel();
@@ -51,23 +42,16 @@ public class DataInputWindow extends JFrame {
 	private ButtonGroup timesButtonGroup;
 	private GridLayout timeLayout;
 	
-	private JPanel addressPanel;
-	private JLabel addressLabel;
-	private JPanel addressLayoutPanel;
-	private JTextArea addressArea[];
-	
 	private JButton cancelButton;
 	private JButton editButton;
 	private JButton saveButton;
 	private JButton sceduleButton;
 	private JPanel buttonPanel;
 	
-	//Editing vars
-	List<JTextArea> inputFields;
-	
+	//Editing vars	
 	HashMap<DataType, JTextArea> dataMap;
 	
-	public DataInputWindow(Customer c) {
+	public DataInputWindow(Customer c, String[] dates, String[] times) {
 		if(c != null) {
 			cst = c;
 		} else {
@@ -75,16 +59,23 @@ public class DataInputWindow extends JFrame {
 		}
 		this.setTitle(cst.get(DataType.NAME));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		inputFields = new ArrayList<JTextArea>();
 		dataMap = new HashMap<DataType, JTextArea>();
+		this.dates = dates;
+		this.times = times;
 		display();
 	}
+	public DataInputWindow(Customer c) {
+		this(c, Lang.DEFAULT_DATES, Lang.DEFAULT_TIMES);
+	}
+	
 	public DataInputWindow() {
 		this(null);
 	}
-	
+
 	public void display() {
 		master = new JPanel();
+		this.setTitle(cst.get(DataType.NAME));
+		
 		master.setLayout(new BoxLayout(master, BoxLayout.Y_AXIS));
 		
 		addTextZone(DataType.NAME);
@@ -110,8 +101,7 @@ public class DataInputWindow extends JFrame {
 			dateSelectPanel.add(dateBox[i]);
 			dateButtonGroup.add(dateBox[i]);
 		}
-		System.out.println(">" + master.hashCode());
-		addToMaster(datePanel, dateLabel, dateSelectPanel);
+		addPanelToMaster(datePanel, dateLabel, dateSelectPanel);
 		
 		timesPanel = new JPanel();
 		timesPanel.setLayout(new BoxLayout(timesPanel, BoxLayout.Y_AXIS));
@@ -129,26 +119,15 @@ public class DataInputWindow extends JFrame {
 			timesSelectPanel.add(timesBox[i]);
 			timesButtonGroup.add(timesBox[i]);
 		}
-		addToMaster(timesPanel, timesLabel, timesSelectPanel);
+		addPanelToMaster(timesPanel, timesLabel, timesSelectPanel);
 		
 		addTextZone(DataType.ADDRESS);
 		addTextZone(DataType.CITY);
-//		addressPanel = new JPanel();
-//		addressLabel = new JLabel(Lang.ADDRESS + ":"); 
-//		addressArea = new JTextArea[2];
-//		addressLayoutPanel = new JPanel();
-//		addressLayoutPanel.setLayout(new BoxLayout(addressLayoutPanel, BoxLayout.Y_AXIS));
-//		addressArea[0] = new JTextArea(address[0]);
-//		inputFields.add(addressArea[0]);
-//		addressArea[1] = new JTextArea(address[1]);
-//		inputFields.add(addressArea[1]);
-//		addressLayoutPanel.add(addressArea[0]);
-//		addressLayoutPanel.add(addressArea[1]);
-//		addToMaster(addressPanel, addressLabel, addressLayoutPanel);
-		
+
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		cancelButton = new JButton(Lang.CANCEL);
+		cancelButton.addActionListener(cancelButtonActionLisener());
 		editButton = new JButton(Lang.EDIT);
 		editButton.addActionListener(editButtonActionListener());
 		saveButton = new JButton(Lang.SAVE);
@@ -165,17 +144,21 @@ public class DataInputWindow extends JFrame {
 		this.setVisible(true);
 	}
 	
+	public void update() {
+		for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
+		    e.getValue().setText(cst.get(e.getKey()));
+		}
+	}
 	private void addTextZone(DataType type) {
 		JLabel label = new JLabel(type.getText() + ":");
 		JTextArea area = new JTextArea(cst.get(type));
-		inputFields.add(area);
 		dataMap.put(type, area);
 		addToMaster(label, area);
 	}
 	
 	private void setEditable(boolean editable) {
-		for(JTextArea jta : inputFields) {
-			jta.setEditable(editable);
+		for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
+		    e.getValue().setEditable(editable);
 		}
 	}
 	
@@ -190,14 +173,23 @@ public class DataInputWindow extends JFrame {
 		master.add(panel);
 	}
 	
+	private void startEditing() {
+		setEditable(true);
+				saveButton.setEnabled(true);
+				sceduleButton.setEnabled(false);
+				editButton.setEnabled(false);
+	}
+	private void endEditing() {
+		setEditable(false);
+		editButton.setEnabled(true);
+		sceduleButton.setEnabled(true);
+		saveButton.setEnabled(false);
+	}
 	private ActionListener editButtonActionListener() {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				setEditable(true);
-				saveButton.setEnabled(true);
-				sceduleButton.setEnabled(false);
-				editButton.setEnabled(false);
+				startEditing();
 			}
 		};
 	}
@@ -207,11 +199,30 @@ public class DataInputWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				setEditable(false);
-				editButton.setEnabled(true);
-				sceduleButton.setEnabled(true);
-				saveButton.setEnabled(false);
+				endEditing();
+				for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
+				    cst.set(e.getKey(), e.getValue().getText());
+				}
 			}
 		};
+	}
+	
+	private ActionListener cancelButtonActionLisener() {
+		return new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(saveButton.isEnabled()) {
+					endEditing();
+					update();
+				} else {
+					System.exit(0);
+				}
+			}
+		};
+	}
+	
+	public DataInputWindow clone() {
+		return new DataInputWindow(cst, dates, times);
 	}
 }

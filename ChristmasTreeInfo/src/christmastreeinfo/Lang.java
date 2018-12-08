@@ -16,4 +16,8 @@ public class Lang {
 	public static final String SAVE = "Save";
 	public static final String SCEDULE = "Scedule";
 	public static final String LAST_PICKUP_DATE = "Last Pickup Date";
+	
+	// Temp vars
+	public static final String DEFAULT_DATES[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
+	public static final String DEFAULT_TIMES[] = {"0", "1"};
 }

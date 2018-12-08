@@ -1,6 +1,5 @@
 package christmastreeinfo;
 
-import java.util.Date;
 import java.util.HashMap;
 
 public class Customer {
