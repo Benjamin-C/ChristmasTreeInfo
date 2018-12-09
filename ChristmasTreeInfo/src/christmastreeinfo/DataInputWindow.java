@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -20,7 +22,7 @@ public class DataInputWindow extends JFrame {
 	/**/ private static final long serialVersionUID = -8900248693643765822L;
 
 	// Customer data
-	Customer cst;
+	private Customer cst;
 		
 	private String dates[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
 	private String times[] = {"0", "1"};
@@ -46,6 +48,7 @@ public class DataInputWindow extends JFrame {
 	private JButton editButton;
 	private JButton saveButton;
 	private JButton sceduleButton;
+	private JButton refreshButton;
 	private JPanel buttonPanel;
 	
 	//Editing vars	
@@ -55,7 +58,7 @@ public class DataInputWindow extends JFrame {
 		if(c != null) {
 			cst = c;
 		} else {
-			cst = new Customer("John Doe");
+			cst = new Customer(new DataPoint(DataType.NAME, "John Doe"), new DataPoint(DataType.ADDRESS, "null, made new"));
 		}
 		this.setTitle(cst.get(DataType.NAME));
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -124,6 +127,7 @@ public class DataInputWindow extends JFrame {
 		
 		addTextZone(DataType.ADDRESS);
 		addTextZone(DataType.CITY);
+		addTextZone(DataType.ZONE);
 
 		buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -135,7 +139,9 @@ public class DataInputWindow extends JFrame {
 		saveButton.addActionListener(saveButtonActionLisener());
 		saveButton.setEnabled(false);
 		sceduleButton = new JButton(Lang.SCEDULE);
-		addToMaster(buttonPanel, cancelButton, editButton, saveButton, sceduleButton);
+		refreshButton = new JButton(Lang.REFRESH);
+		refreshButton.addActionListener(refreshButtonActionListener());
+		addToMaster(buttonPanel, cancelButton, editButton, saveButton, sceduleButton, refreshButton);
 		
 		setEditable(false);
 		
@@ -186,7 +192,6 @@ public class DataInputWindow extends JFrame {
 		}
 	}
 	private void endEditing() {
-		System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
 		cst.set(DataType.DATA_EDIT_LOCKED, Keys.FALSE);
 		setEditable(false);
 		editButton.setEnabled(true);
@@ -209,8 +214,11 @@ public class DataInputWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				endEditing();
 				for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
-				    cst.set(e.getKey(), e.getValue().getText());
+					System.out.println(e.getValue().getText());
+				    cst.set(e.getKey(), SaveDataConverter.getFromString(e.getValue().getText(), e.getKey()));
+				    System.out.println(cst.get(e.getKey()));
 				}
+				update();
 			}
 		};
 	}
@@ -230,6 +238,16 @@ public class DataInputWindow extends JFrame {
 		};
 	}
 	
+	private ActionListener refreshButtonActionListener() {
+		return new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				update();
+			}
+		};
+	}
 	public DataInputWindow clone() {
 		return new DataInputWindow(cst, dates, times);
 	}

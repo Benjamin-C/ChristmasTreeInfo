@@ -8,8 +8,11 @@ public class Customer {
 
 	private HashMap<DataType, Object> data;
 	
-	public Customer() {
+	public Customer(DataPoint... dp) {
 		this(new HashMap<DataType, Object>());
+		for(DataPoint d : dp) {
+			d.addTo(data);
+		}
 	}
 	public Customer(HashMap<DataType, Object> h) {
 		data = h;
@@ -34,10 +37,17 @@ public class Customer {
 		return data.get(k);
 	}
 	
-	public void set(DataType k, Object o) {
+	public void setraw(DataType k, Object o) {
 		data.put(k, o);
 	}
 	
+	public void set(DataType k, Object o) {
+		if(o instanceof String) {
+			data.put(k, SaveDataConverter.getFromString((String) o, k));
+		} else {
+			setraw(k, o);
+		}
+	}
 	public boolean exists(DataType k) {
 		return data.containsKey(k);
 	}

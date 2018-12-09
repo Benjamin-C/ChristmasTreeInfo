@@ -43,6 +43,7 @@ public class WaitingRoom {
 	 */
 	public static Customer getCustomerByUUID(UUID uuid) {
 		for(Customer c : customers) {
+			System.out.println(c.getraw(DataType.UUID).toString() + "~" + uuid.toString());
 			if(c.getraw(DataType.UUID).equals(uuid)) {
 				return c;
 			}
@@ -81,5 +82,13 @@ public class WaitingRoom {
 	 */
 	public static int size() {
 		return customers.size();
+	}
+	
+	/**
+	 * 
+	 * @return The index of the last item on the list
+	 */
+	public static int lastindex() {
+		return customers.size() - 1;
 	}
 }
