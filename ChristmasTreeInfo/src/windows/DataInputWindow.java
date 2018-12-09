@@ -1,4 +1,4 @@
-package christmastreeinfo;
+package windows;
 
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -16,6 +16,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
+
+import christmastreeinfo.Lang;
+import customer.Customer;
+import customer.DataPoint;
+import customer.DataType;
+import customer.Keys;
+import customer.SaveDataConverter;
 
 public class DataInputWindow extends JFrame {
 	

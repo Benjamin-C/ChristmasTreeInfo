@@ -1,4 +1,4 @@
-package christmastreeinfo;
+package windows;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +10,11 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import christmastreeinfo.Lang;
+import christmastreeinfo.WaitingRoom;
+import customer.Customer;
+import customer.DataType;
 
 public class CustomerSelectionWindow extends JFrame {
 

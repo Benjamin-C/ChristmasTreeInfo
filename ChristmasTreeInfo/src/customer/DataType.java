@@ -1,4 +1,6 @@
-package christmastreeinfo;
+package customer;
+
+import christmastreeinfo.Lang;
 
 public enum DataType {
 NAME(Lang.NAME),

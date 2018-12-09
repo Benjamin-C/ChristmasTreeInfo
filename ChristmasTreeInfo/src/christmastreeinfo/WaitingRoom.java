@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import customer.Customer;
+import customer.DataType;
+
 public class WaitingRoom {
 
 	private static List<Customer> customers = new ArrayList<Customer>();

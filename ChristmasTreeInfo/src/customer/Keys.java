@@ -1,4 +1,4 @@
-package christmastreeinfo;
+package customer;
 
 public class Keys {
 

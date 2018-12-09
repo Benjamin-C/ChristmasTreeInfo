@@ -1,4 +1,4 @@
-package christmastreeinfo;
+package customer;
 
 import java.util.HashMap;
 import java.util.Random;
