@@ -116,7 +116,6 @@ public class CustomerSelectionWindow extends JFrame {
 		return new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				System.out.println(uuid);
 				new DataInputWindow(WaitingRoom.getCustomerByUUID(uuid));
 			}
 		};

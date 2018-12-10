@@ -4,10 +4,12 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
+import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -31,8 +33,8 @@ public class DataInputWindow extends JFrame {
 	// Customer data
 	private Customer cst;
 		
-	private String dates[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
-	private String times[] = {"0", "1"};
+	private String dates[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Any"};
+	private String times[] = {"Morning", "Afternoon"};
 	
 	// JPanel stuffs
 	private JPanel master = new JPanel();
@@ -56,18 +58,21 @@ public class DataInputWindow extends JFrame {
 	private JButton saveButton;
 	private JButton sceduleButton;
 	private JButton refreshButton;
+	private JButton exitButton;
 	private JPanel buttonPanel;
 	
+	private JFrame me;
 	//Editing vars	
 	HashMap<DataType, JTextArea> dataMap;
 	
 	public DataInputWindow(Customer c, String[] dates, String[] times) {
+		me = this;
 		if(c != null) {
 			cst = c;
 		} else {
 			cst = new Customer(new DataPoint(DataType.NAME, "John Doe"), new DataPoint(DataType.ADDRESS, "null, made new"));
 		}
-		this.setTitle(cst.get(DataType.NAME));
+		setTitle();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		dataMap = new HashMap<DataType, JTextArea>();
 		this.dates = dates;
@@ -109,6 +114,10 @@ public class DataInputWindow extends JFrame {
 		for(int i = 0; i < dates.length; i++) {
 			dateBox[i] = new JRadioButton(dates[i]);
 			dateBox[i].setText(dates[i]);
+			dateBox[i].setActionCommand(Integer.toString(i));
+			if(dates[i].equals(cst.get(DataType.PICKUP_DATE))) {
+				dateBox[i].setSelected(true);
+			}
 			dateSelectPanel.add(dateBox[i]);
 			dateButtonGroup.add(dateBox[i]);
 		}
@@ -127,6 +136,10 @@ public class DataInputWindow extends JFrame {
 		for(int i = 0; i < times.length; i++) {
 			timesBox[i] = new JRadioButton(times[i]);
 			timesBox[i].setText(times[i]);
+			timesBox[i].setActionCommand(Integer.toString(i));
+			if(times[i].equals(cst.get(DataType.PICKUP_TIME))) {
+				timesBox[i].setSelected(true);
+			}
 			timesSelectPanel.add(timesBox[i]);
 			timesButtonGroup.add(timesBox[i]);
 		}
@@ -140,15 +153,20 @@ public class DataInputWindow extends JFrame {
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		cancelButton = new JButton(Lang.CANCEL);
 		cancelButton.addActionListener(cancelButtonActionLisener());
+		cancelButton.setEnabled(false);
 		editButton = new JButton(Lang.EDIT);
 		editButton.addActionListener(editButtonActionListener());
 		saveButton = new JButton(Lang.SAVE);
 		saveButton.addActionListener(saveButtonActionLisener());
 		saveButton.setEnabled(false);
 		sceduleButton = new JButton(Lang.SCEDULE);
+		sceduleButton.addActionListener(sceduleButtonActionListener());
 		refreshButton = new JButton(Lang.REFRESH);
 		refreshButton.addActionListener(refreshButtonActionListener());
-		addToMaster(buttonPanel, cancelButton, editButton, saveButton, sceduleButton, refreshButton);
+		exitButton = new JButton(Lang.EXIT);
+		exitButton.addActionListener(exitButtonActionListener());
+		addToMaster(buttonPanel, cancelButton, editButton, saveButton);
+		addToMaster(buttonPanel, sceduleButton, refreshButton, exitButton);
 		
 		setEditable(false);
 		
@@ -187,15 +205,35 @@ public class DataInputWindow extends JFrame {
 		master.add(panel);
 	}
 	
+	private void setTitle() {
+		this.setTitle(cst.get(DataType.NAME));
+	}
+	
 	private void startEditing() {
-		System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
-		if(!cst.get(DataType.DATA_EDIT_LOCKED).equals(Keys.TRUE)) {
-			cst.set(DataType.DATA_EDIT_LOCKED, Keys.TRUE);
-			System.out.println(cst.get(DataType.DATA_EDIT_LOCKED));
-			setEditable(true);
-			saveButton.setEnabled(true);
-			sceduleButton.setEnabled(false);
-			editButton.setEnabled(false);
+		if(!cst.get(DataType.DATA_LOCKED).equals(Keys.TRUE)) {
+			if(!cst.get(DataType.DATA_EDIT_LOCKED).equals(Keys.TRUE)) {
+				setTitle(cst.get(DataType.NAME) + " [" + Lang.EDITING + "]");
+				cst.set(DataType.DATA_EDIT_LOCKED, Keys.TRUE);
+				setEditable(true);
+				saveButton.setEnabled(true);
+				cancelButton.setEnabled(true);
+				sceduleButton.setEnabled(false);
+				editButton.setEnabled(false);
+				refreshButton.setEnabled(false);
+				exitButton.setEnabled(false);
+				Enumeration<AbstractButton> btn = dateButtonGroup.getElements();
+				while(btn.hasMoreElements()) {
+					btn.nextElement().setEnabled(false);
+				}
+				btn = timesButtonGroup.getElements();
+				while(btn.hasMoreElements()) {
+					btn.nextElement().setEnabled(false);
+				}
+			} else {
+				new InfoWindow(Lang.CONCURRENT_EDIT_MSG, Lang.PROGRAM_NAME);
+			}
+		} else {
+			new InfoWindow(Lang.EDIT_LOCKED_MSG, Lang.PROGRAM_NAME);
 		}
 	}
 	private void endEditing() {
@@ -203,7 +241,19 @@ public class DataInputWindow extends JFrame {
 		setEditable(false);
 		editButton.setEnabled(true);
 		sceduleButton.setEnabled(true);
+		cancelButton.setEnabled(false);
 		saveButton.setEnabled(false);
+		refreshButton.setEnabled(true);
+		exitButton.setEnabled(true);
+		Enumeration<AbstractButton> btn = dateButtonGroup.getElements();
+		while(btn.hasMoreElements()) {
+			btn.nextElement().setEnabled(true);
+		}
+		btn = timesButtonGroup.getElements();
+		while(btn.hasMoreElements()) {
+			btn.nextElement().setEnabled(true);
+		}
+		setTitle();
 	}
 	private ActionListener editButtonActionListener() {
 		return new ActionListener() {
@@ -220,11 +270,15 @@ public class DataInputWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				endEditing();
+				String changes = "{";
 				for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
-					System.out.println(e.getValue().getText());
+					if(!e.getValue().getText().equals(cst.get(e.getKey()))) {
+						changes = changes + ",\"" + e.getKey().toString() + "\":\"" + e.getValue().getText() + "\"";
+					}
 				    cst.set(e.getKey(), SaveDataConverter.getFromString(e.getValue().getText(), e.getKey()));
-				    System.out.println(cst.get(e.getKey()));
 				}
+				System.out.println(changes);
+				cst.set(DataType.CHANGE_INFO, cst.get(DataType.CHANGE_INFO) + changes + "}");
 				update();
 			}
 		};
@@ -236,15 +290,33 @@ public class DataInputWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(saveButton.isEnabled()) {
-					endEditing();
-					update();
+					new InfoWindow(Lang.CLOSE_MSG, Lang.PROGRAM_NAME,
+							new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { endEditing(); update(); } }, true),
+							new InfoWindowButton(Lang.NO, null, true));
 				} else {
-					System.exit(0);
+					
 				}
 			}
 		};
 	}
 	
+	private ActionListener sceduleButtonActionListener() {
+		return new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(dateButtonGroup.getSelection() != null) {
+					cst.set(DataType.PICKUP_DATE, dates[Integer.parseInt(dateButtonGroup.getSelection().getActionCommand())]);
+				}
+				if(timesButtonGroup.getSelection() != null) {
+					cst.set(DataType.PICKUP_TIME, times[Integer.parseInt(timesButtonGroup.getSelection().getActionCommand())]);
+				}
+				new InfoWindow(Lang.SCEDULED, Lang.PROGRAM_NAME);
+			}
+		};
+	}
+
 	private ActionListener refreshButtonActionListener() {
 		return new ActionListener() {
 			
@@ -252,6 +324,32 @@ public class DataInputWindow extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
 				update();
+			}
+		};
+	}
+	private ActionListener exitButtonActionListener() {
+		return new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				if(editButton.isEnabled() != true) {
+					new InfoWindow(Lang.EDIT_NOT_SAVED_MSG, Lang.PROGRAM_NAME);
+				} else {
+					String date = "";
+					String time = "";
+					if(dateButtonGroup.getSelection() != null) {
+						date = dates[Integer.parseInt(dateButtonGroup.getSelection().getActionCommand())];
+					}
+					if(timesButtonGroup.getSelection() != null) {
+						time =  times[Integer.parseInt(timesButtonGroup.getSelection().getActionCommand())];
+					}
+					if(!date.equals(cst.get(DataType.PICKUP_DATE)) || !time.equals(cst.get(DataType.PICKUP_TIME))) {
+						new InfoWindow(Lang.SCEDULE_NOT_SAVED_MSG, Lang.PROGRAM_NAME);
+					} else {
+						me.dispose();
+					}
+				}
 			}
 		};
 	}

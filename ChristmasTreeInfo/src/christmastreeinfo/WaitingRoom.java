@@ -46,7 +46,6 @@ public class WaitingRoom {
 	 */
 	public static Customer getCustomerByUUID(UUID uuid) {
 		for(Customer c : customers) {
-			System.out.println(c.getraw(DataType.UUID).toString() + "~" + uuid.toString());
 			if(c.getraw(DataType.UUID).equals(uuid)) {
 				return c;
 			}

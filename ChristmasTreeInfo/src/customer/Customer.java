@@ -83,4 +83,13 @@ public class Customer {
 		}
 		return out;
 	}
+	
+	public static Customer getCustomerFromString(String data, String delim, DataType... dataTypes) {
+		String partsp[] = data.split(delim);
+		Customer out = new Customer();
+		for(int i = 0; i < Math.min(partsp.length, dataTypes.length); i++) {
+			out.set(dataTypes[i], SaveDataConverter.getFromString(partsp[i], dataTypes[i]));
+		};
+		return out;
+	}
 }

@@ -2,6 +2,12 @@ package christmastreeinfo;
 
 public class Lang {
 
+	public static final String PROGRAM_NAME = "ChristmasTreeInfo";
+	public static final String CONCURRENT_EDIT_MSG = "This file is already being\nedit by someone else.\nPlease try again later";
+	public static final String EDIT_LOCKED_MSG = "This file is locked. Please\nask the admin if you\nthink this is an error.";
+	public static final String EDIT_NOT_SAVED_MSG = "Please save before closing";
+	public static final String SCEDULE_NOT_SAVED_MSG = "Please save the scedule\nbefore exiting";
+	public static final String CLOSE_MSG = "Are you sure you\nwant to cancel?";
 	public static final String NAME = "Name";
 	public static final String PHONE_NUMBER = "Phone Number";
 	public static final String ADDRESS = "Address";
@@ -23,8 +29,15 @@ public class Lang {
 	public static final String NEXT = "Next";
 	public static final String PREVIOUS = "Previous";
 	public static final String REFRESH = "Refresh";
+	public static final String CHANGE_INFO = "Changes";
+	public static final String OK = "ok";
+	public static final String EDITING = "Editing";
+	public static final String SCEDULED = "Sceduled";
+	public static final String EXIT = "Exit";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
 	
-	// Temp vars
-	public static final String DEFAULT_DATES[] = {"0", "1", "2", "3", "4", "5", "6", "7"};
-	public static final String DEFAULT_TIMES[] = {"0", "1"};
+	// Date configuration values
+	public static final String DEFAULT_DATES[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Any"};
+	public static final String DEFAULT_TIMES[] = {"Morning", "Afternoon"};
 }
