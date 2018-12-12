@@ -6,10 +6,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.swing.JTextArea;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

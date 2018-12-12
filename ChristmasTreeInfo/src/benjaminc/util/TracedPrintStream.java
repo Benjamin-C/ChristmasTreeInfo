@@ -2,7 +2,6 @@ package benjaminc.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -150,7 +149,7 @@ public class TracedPrintStream extends PrintStream{
 	}
 	@Override
 	public void println(char[] x) {
-		super.println(stackTrace(0, 1) + ": " +x);
+		super.println(stackTrace(0, 1) + ": " + String.valueOf(x));
 	}
 	@Override
 	public void println(double x) {

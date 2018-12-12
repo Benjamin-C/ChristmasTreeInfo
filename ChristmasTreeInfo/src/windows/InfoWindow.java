@@ -1,5 +1,7 @@
 package windows;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,15 +29,17 @@ public class InfoWindow extends JFrame {
 			buttons = new InfoWindowButton[1];
 			buttons[0] = new InfoWindowButton(Lang.OK, null, true);
 		}
-		JPanel jp = new JPanel();
-		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
+		JPanel jpm = new JPanel();
+		jpm.setLayout(new BoxLayout(jpm, BoxLayout.Y_AXIS));
 		String msg[] = text.split("\n");
 		for(String s : msg) {
+			JPanel jpt = new JPanel();
 			JLabel jt = new JLabel(s);
-			jp.add(jt);
+			jpt.add(jt);
+			jpm.add(jpt);
 		}
 		JPanel buttonPanel = new JPanel();
-		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+		//buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
 		for(InfoWindowButton b : buttons) {
 			JButton button = new JButton(b.getText());
 			button.addActionListener(new ActionListener() {
@@ -52,8 +56,8 @@ public class InfoWindow extends JFrame {
 			});
 			buttonPanel.add(button);
 		}
-		jp.add(buttonPanel);
-		this.add(jp);
+		jpm.add(buttonPanel);
+		this.add(jpm);
 		this.setTitle(title);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.pack();

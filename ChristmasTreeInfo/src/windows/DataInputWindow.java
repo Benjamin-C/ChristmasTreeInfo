@@ -4,11 +4,13 @@ import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import javax.swing.AbstractButton;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -21,6 +23,7 @@ import javax.swing.JTextArea;
 
 import christmastreeinfo.Keys;
 import christmastreeinfo.Lang;
+
 import customer.Customer;
 import customer.DataPoint;
 import customer.DataType;
@@ -63,7 +66,7 @@ public class DataInputWindow extends JFrame {
 	
 	private JFrame me;
 	//Editing vars	
-	HashMap<DataType, JTextArea> dataMap;
+	private HashMap<DataType, JTextArea> dataMap;
 	
 	public DataInputWindow(Customer c, String[] dates, String[] times) {
 		me = this;
@@ -74,6 +77,12 @@ public class DataInputWindow extends JFrame {
 		}
 		setTitle();
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		this.addComponentListener(new ComponentAdapter() {
+		        public void componentResized(ComponentEvent evt) {
+		            me.setTitle(setTitle() + " " + me.getWidth() + "x" + me.getHeight());
+		        }
+		});
+
 		dataMap = new HashMap<DataType, JTextArea>();
 		this.dates = dates;
 		this.times = times;
@@ -114,10 +123,7 @@ public class DataInputWindow extends JFrame {
 		for(int i = 0; i < dates.length; i++) {
 			dateBox[i] = new JRadioButton(dates[i]);
 			dateBox[i].setText(dates[i]);
-			dateBox[i].setActionCommand(Integer.toString(i));
-			if(dates[i].equals(cst.get(DataType.PICKUP_DATE))) {
-				dateBox[i].setSelected(true);
-			}
+			dateBox[i].setActionCommand(dates[i]);
 			dateSelectPanel.add(dateBox[i]);
 			dateButtonGroup.add(dateBox[i]);
 		}
@@ -136,10 +142,7 @@ public class DataInputWindow extends JFrame {
 		for(int i = 0; i < times.length; i++) {
 			timesBox[i] = new JRadioButton(times[i]);
 			timesBox[i].setText(times[i]);
-			timesBox[i].setActionCommand(Integer.toString(i));
-			if(times[i].equals(cst.get(DataType.PICKUP_TIME))) {
-				timesBox[i].setSelected(true);
-			}
+			timesBox[i].setActionCommand(times[i]);
 			timesSelectPanel.add(timesBox[i]);
 			timesButtonGroup.add(timesBox[i]);
 		}
@@ -170,6 +173,8 @@ public class DataInputWindow extends JFrame {
 		
 		setEditable(false);
 		
+		update();
+		
 		this.add(master);
 		this.validate();
 		this.pack();
@@ -178,7 +183,22 @@ public class DataInputWindow extends JFrame {
 	
 	public void update() {
 		for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
-		    e.getValue().setText(cst.get(e.getKey()));
+		    e.getValue().setText(cst.get(e.getKey()).toString());
+		}
+		System.out.println("Update");
+		for(JRadioButton jb : dateBox) {
+			System.out.println(jb.getActionCommand() + " " + cst.get(DataType.PICKUP_DATE));
+			if(jb.getActionCommand().equals(cst.get(DataType.PICKUP_DATE))) {
+				jb.setSelected(true);
+				System.out.println("Match");
+			}
+		}
+		for(JRadioButton jb : timesBox) {
+			if(jb.getActionCommand().equals(cst.get(DataType.PICKUP_TIME))) {
+				jb.setSelected(true);
+			} else {
+				jb.setSelected(false);
+			}
 		}
 	}
 	private void addTextZone(DataType type) {
@@ -205,14 +225,19 @@ public class DataInputWindow extends JFrame {
 		master.add(panel);
 	}
 	
-	private void setTitle() {
-		this.setTitle(cst.get(DataType.NAME));
+	private String setTitle() {
+		if(!cst.get(DataType.DATA_EDIT_LOCKED).equals(Keys.TRUE)) {
+			this.setTitle(cst.get(DataType.NAME));
+		} else {
+			setTitle(cst.get(DataType.NAME) + " [" + Lang.EDITING + "]");
+		}
+		return this.getTitle();
 	}
 	
 	private void startEditing() {
 		if(!cst.get(DataType.DATA_LOCKED).equals(Keys.TRUE)) {
 			if(!cst.get(DataType.DATA_EDIT_LOCKED).equals(Keys.TRUE)) {
-				setTitle(cst.get(DataType.NAME) + " [" + Lang.EDITING + "]");
+				setTitle();
 				cst.set(DataType.DATA_EDIT_LOCKED, Keys.TRUE);
 				setEditable(true);
 				saveButton.setEnabled(true);
@@ -306,13 +331,13 @@ public class DataInputWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				// TODO Auto-generated method stub
-				if(dateButtonGroup.getSelection() != null) {
+				if(dateButtonGroup.getSelection() != null && timesButtonGroup.getSelection() != null) {
 					cst.set(DataType.PICKUP_DATE, dates[Integer.parseInt(dateButtonGroup.getSelection().getActionCommand())]);
-				}
-				if(timesButtonGroup.getSelection() != null) {
 					cst.set(DataType.PICKUP_TIME, times[Integer.parseInt(timesButtonGroup.getSelection().getActionCommand())]);
+					new InfoWindow(Lang.SCEDULED, Lang.PROGRAM_NAME);
+				} else {
+					new InfoWindow(Lang.SET_DATE_AND_TIME_MSG, Lang.PROGRAM_NAME);
 				}
-				new InfoWindow(Lang.SCEDULED, Lang.PROGRAM_NAME);
 			}
 		};
 	}
@@ -339,10 +364,10 @@ public class DataInputWindow extends JFrame {
 					String date = "";
 					String time = "";
 					if(dateButtonGroup.getSelection() != null) {
-						date = dates[Integer.parseInt(dateButtonGroup.getSelection().getActionCommand())];
+						date = dateButtonGroup.getSelection().getActionCommand();
 					}
 					if(timesButtonGroup.getSelection() != null) {
-						time =  times[Integer.parseInt(timesButtonGroup.getSelection().getActionCommand())];
+						time = timesButtonGroup.getSelection().getActionCommand();
 					}
 					if(!date.equals(cst.get(DataType.PICKUP_DATE)) || !time.equals(cst.get(DataType.PICKUP_TIME))) {
 						new InfoWindow(Lang.SCEDULE_NOT_SAVED_MSG, Lang.PROGRAM_NAME);
