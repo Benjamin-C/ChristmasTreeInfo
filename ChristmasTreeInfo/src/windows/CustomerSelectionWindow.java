@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import christmastreeinfo.Lang;
+import christmastreeinfo.PersonFactory;
 import christmastreeinfo.WaitingRoom;
 import customer.Customer;
 import customer.DataType;
@@ -22,7 +23,7 @@ public class CustomerSelectionWindow extends JFrame {
 
 	private JPanel main;
 	
-	private JPanel personButtonPanel;
+	private JPanel personButtonPanel[];
 	private HashMap<UUID, JButton> personButtons;
 	
 	private JLabel partLabel;
@@ -33,12 +34,15 @@ public class CustomerSelectionWindow extends JFrame {
 	
 	private int customerStartIndex;
 	private int customerSeeSize = 8;
+	private int colums = 3;
 	
 	public CustomerSelectionWindow() {
 		this.setTitle("Select Person");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		personButtons = new HashMap<UUID, JButton>();
+		personButtonPanel = new JPanel[colums];
 		customerStartIndex = 0;
+		customerSeeSize = customerSeeSize * colums;
 		display();
 	}
 	
@@ -50,10 +54,20 @@ public class CustomerSelectionWindow extends JFrame {
 		main.add(partLabel);
 		updatePartLabel();
 		
-		personButtonPanel = new JPanel();
-		personButtonPanel.setLayout(new BoxLayout(personButtonPanel, BoxLayout.Y_AXIS));
-		main.add(personButtonPanel);
+		JPanel people = new JPanel();
+		people.setLayout(new BoxLayout(people, BoxLayout.X_AXIS));
 		
+		for(int i = 0; i < personButtonPanel.length; i++) {
+			personButtonPanel[i] = new JPanel();
+			personButtonPanel[i].setLayout(new BoxLayout(personButtonPanel[i], BoxLayout.Y_AXIS));
+			people.add(personButtonPanel[i]);
+			System.out.println(personButtonPanel[i]);
+		}
+		for(JPanel jp:personButtonPanel) {
+			System.out.println(jp);
+		}
+		
+		main.add(people);
 		updateButtons();
 		
 		controlButtonPanel = new JPanel();
@@ -75,18 +89,20 @@ public class CustomerSelectionWindow extends JFrame {
 		partLabel.setText(customerStartIndex + " - " + Math.min(WaitingRoom.size(), (customerStartIndex + customerSeeSize)) + " of " + WaitingRoom.size());
 	}
 	private void updateButtons() {
-		personButtonPanel.removeAll();
-		for(int i = customerStartIndex; i < Math.min((customerStartIndex + customerSeeSize), WaitingRoom.size()); i++) {
-			makePersonButton(WaitingRoom.getCustomerBySpot(i));
+		for(int i = 0; i < colums; i++) {
+			personButtonPanel[i].removeAll();
+			for(int j = customerStartIndex + (customerSeeSize / colums * i); j < Math.min((customerStartIndex + (customerSeeSize / colums * i) + (customerSeeSize / colums)), WaitingRoom.size()); j++) {
+				makePersonButton(WaitingRoom.getCustomerBySpot(j), personButtonPanel[i]);
+			}
 		}
 		updatePartLabel();
 		this.validate();
 		this.pack();
 	}
-	private void makePersonButton(Customer c) {
+	private void makePersonButton(Customer c, JPanel panel) {
 		JButton btn = new JButton(c.get(DataType.NAME));
 		btn.addActionListener(personButtonActionListener((UUID) c.getraw(DataType.UUID))); 
-		personButtonPanel.add(btn);
+		panel.add(btn);
 		personButtons.put((UUID) c.getraw(DataType.UUID), btn);
 	}
 	
@@ -95,9 +111,7 @@ public class CustomerSelectionWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				if((customerStartIndex + customerSeeSize) < WaitingRoom.lastindex()) {
-					customerStartIndex += customerSeeSize;
-				}
+				customerStartIndex = Math.min((customerStartIndex + customerSeeSize), (WaitingRoom.lastindex() - customerSeeSize + 1));
 				updateButtons();
 			}
 		};

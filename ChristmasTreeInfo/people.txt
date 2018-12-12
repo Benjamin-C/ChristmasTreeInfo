@@ -22,7 +22,7 @@ Yoko Bird;1-607-295-9177;posuere@hendrerit.net;P.O. Box 935, 8157 Mi. Rd.;Albace
 Judith Hogan;1-681-348-8632;Morbi@orciUt.net;309 Tempus Ave;Böblingen
 Anne Vinson;1-618-218-7200;nonummy.ultricies@tortordictumeu.edu;P.O. Box 536, 568 Dapibus Ave;Serramonacesca
 Lavinia Rodriguez;1-807-208-3779;Donec.est.Nunc@imperdiet.co.uk;6098 Sed Avenue;Scarborough
-Charles Arnold;1-767-455-6963;Cum.sociis@sitamet.ca;269-9700 Aenean Av.;Zeist
+Charles Arnold;1-767-455-6963;billus.sociis@sitamet.ca;269-9700 Aenean Av.;Zeist
 Burton Gill;1-200-783-9465;nisi.nibh.lacinia@Cras.edu;P.O. Box 791, 7562 Ut Rd.;Port Harcourt
 Ria Dominguez;1-954-259-6504;nulla.at.sem@penatibuset.com;6913 Ultrices Rd.;Jonqui�re
 Evelyn Le;1-703-303-1224;interdum.feugiat@sagittisaugue.edu;4570 Et Ave;Vijayawada
@@ -490,7 +490,7 @@ Macy Farmer;1-845-758-1869;a.tortor@fringilla.edu;755 Sociis Road;Orai
 Elvis Spears;1-191-730-5360;lorem.luctus.ut@laciniavitaesodales.net;P.O. Box 577, 2701 Morbi St.;Jackson
 Francis Hinton;1-717-973-6672;est.mauris.rhoncus@suscipitnonummy.com;6180 Et, St.;Carlisle
 Leonard Myers;1-507-206-0940;risus@Aenean.org;P.O. Box 435, 9840 Arcu. St.;Wolfsberg
-Laura Bell;1-474-218-4222;eu@pellentesquea.co.uk;764-350 Sed Rd.;Morolo
+Laura Bell;1-474-218-4222;eu@pellentesquea.co.uk;764-350 Sed Rd.;Morolof
 Kiayada Nelson;1-240-657-4575;Nullam.nisl@quisdiamPellentesque.org;Ap #182-2453 Cras Rd.;Petrópolis
 Steven Carroll;1-185-981-2784;In.lorem.Donec@eumetus.net;8365 Nisl St.;Piotrków Trybunalski
 Clayton House;1-810-157-0262;faucibus.leo@diamSeddiam.net;Ap #861-5608 Fames Rd.;Daly

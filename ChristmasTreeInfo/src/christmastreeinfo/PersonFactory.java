@@ -51,7 +51,6 @@ public class PersonFactory {
 			case 3: email.add(part[2]);
 			case 2: phone.add(part[1]);
 			case 1: {String name[] = part[0].split(" ");
-				System.out.println(name.length);
 				name1.add(name[0]);
 				if(name.length >= 2) {
 					name2.add(name[1]);

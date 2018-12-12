@@ -1,8 +1,18 @@
 package customer;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
+
+import javax.swing.JTextArea;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Customer {
 
@@ -84,6 +94,31 @@ public class Customer {
 		return out;
 	}
 	
+	public String toJson() {
+		JsonObject jo = new JsonObject();
+		for (Map.Entry<DataType, Object> e : data.entrySet()) {
+			jo.addProperty(e.getKey().toString(), e.getValue().toString());
+		}
+		return jo.toString();
+	}
+	
+	public static Customer getCustomerFromJSON(String json) {
+		Customer out = new Customer();
+		
+		System.out.println(json);
+
+		JsonParser jp = new JsonParser();
+		JsonObject jo = jp.parse(json).getAsJsonObject();
+		Set<Map.Entry<String, JsonElement>> entries = jo.entrySet();//will return members of your object
+		for (Map.Entry<String, JsonElement> entry: entries) {
+			DataType dt = SaveDataConverter.getDataTypeFromString(entry.getKey());
+			if(dt != null) {
+				out.set(dt, SaveDataConverter.getFromString(entry.getValue().getAsString(), dt));
+				System.out.println(entry.getValue() + " " + entry.getKey());
+			}
+		}
+		return out;
+	}
 	public static Customer getCustomerFromString(String data, String delim, DataType... dataTypes) {
 		String partsp[] = data.split(delim);
 		Customer out = new Customer();

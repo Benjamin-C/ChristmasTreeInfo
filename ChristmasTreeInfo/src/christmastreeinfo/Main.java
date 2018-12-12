@@ -29,8 +29,11 @@ public class Main {
 		ben.set(DataType.DATA_LOCKED, Keys.TRUE);
 		System.out.println(ben.get(DataType.PHONE_NUMBER));
 		System.out.println(ben.get(DataType.ADDRESS));
+		String benjson = ben.toJson();
+		ben = null;
+		ben = Customer.getCustomerFromJSON(benjson);
 		List<Customer> cal = new ArrayList<Customer>();
-		int count = 7;
+		int count = 64;
 		cal.add(ben);
 		try {
 			PersonFactory pf = new PersonFactory(new File("people.txt"));
