@@ -5,59 +5,60 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import christmastreeinfo.Lang;
+import christmastreeinfo.Lobby;
 import christmastreeinfo.Main;
 import christmastreeinfo.WaitingRoom;
-import christmastreeinfo.Lobby;
 import customer.Customer;
 import customer.DataType;
 
-public class CustomerSelectionWindow extends JFrame {
+public class CustomerSelectionCheckboxWindow extends JFrame {
 
 	/**/ private static final long serialVersionUID = 9188929133770395180L;
 
 	private JPanel main;
 	
 	private JPanel personButtonPanel[];
-	private HashMap<UUID, JButton> personButtons;
+	private HashMap<UUID, JCheckBox> personButtons;
 	
 	private JLabel partLabel;
 	
 	private JPanel controlButtonPanel;
-	private JButton selectButton;
 	private JButton nextbutton;
 	private JButton prevButton;
 	private JButton exitButton;
+	private JButton goButton;
 	
 	private int customerStartIndex;
 	private int customerSeeSize = 8;
 	private int colums = 3;
 	
+	private JFrame me;
+	
 	private WaitingRoom customers;
 	
-	public CustomerSelectionWindow() {
-		this(new WaitingRoom(Lobby.getAllCustomers()));
-	}
-	public CustomerSelectionWindow(WaitingRoom customers) {
+	public CustomerSelectionCheckboxWindow(WaitingRoom customers) {
 		if(customers == null) {
 			customers = new WaitingRoom(Lobby.getAllCustomers());
 		}
 		this.customers = customers;
-		
+		me = this;
 		this.setTitle("Select Person");
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		
 		this.addWindowListener(getWindowListener());
 		
-		personButtons = new HashMap<UUID, JButton>();
+		personButtons = new HashMap<UUID, JCheckBox>();
 		personButtonPanel = new JPanel[colums];
 		customerStartIndex = 0;
 		customerSeeSize = customerSeeSize * colums;
@@ -85,9 +86,6 @@ public class CustomerSelectionWindow extends JFrame {
 		updateButtons();
 		
 		controlButtonPanel = new JPanel();
-		selectButton = new JButton(Lang.SELECT);
-		selectButton.addActionListener(selectButtonActionListener());
-		controlButtonPanel.add(selectButton);
 		prevButton = new JButton(Lang.PREVIOUS);
 		prevButton.addActionListener(prevButtonActionListener());
 		controlButtonPanel.add(prevButton);
@@ -97,6 +95,9 @@ public class CustomerSelectionWindow extends JFrame {
 		exitButton = new JButton(Lang.EXIT);
 		exitButton.addActionListener(exitButtonActionListener());
 		controlButtonPanel.add(exitButton);
+		goButton = new JButton(Lang.GO);
+		goButton.addActionListener(goButtonActionListener());
+		controlButtonPanel.add(goButton);
 		
 		main.add(controlButtonPanel);
 		
@@ -106,7 +107,7 @@ public class CustomerSelectionWindow extends JFrame {
 		this.setVisible(true);
 	}
 	private void updatePartLabel() {
-		partLabel.setText(customerStartIndex + " - " + Math.min(customers.size(), (customerStartIndex + customerSeeSize - 1)) + Lang.OF + (customers.size() - 1));
+		partLabel.setText(customerStartIndex + " - " + Math.min(customers.size(), (customerStartIndex + customerSeeSize - 1)) + Lang.OF + customers.lastindex());
 	}
 	private void updateButtons() {
 		for(int i = 0; i < colums; i++) {
@@ -120,10 +121,13 @@ public class CustomerSelectionWindow extends JFrame {
 		this.pack();
 	}
 	private void makePersonButton(Customer c, JPanel panel) {
-		JButton btn = new JButton(c.get(DataType.NAME));
-		btn.addActionListener(personButtonActionListener((UUID) c.getraw(DataType.UUID))); 
-		panel.add(btn);
-		personButtons.put((UUID) c.getraw(DataType.UUID), btn);
+		if(personButtons.containsKey(c.getraw(DataType.UUID))) {
+			panel.add(personButtons.get(c.getraw(DataType.UUID)));
+		} else {
+			JCheckBox ckbx = new JCheckBox(c.get(DataType.NAME));
+			panel.add(ckbx);
+			personButtons.put((UUID) c.getraw(DataType.UUID), ckbx);
+		}
 	}
 	
 	private ActionListener nextButtonActionListener() {
@@ -135,15 +139,6 @@ public class CustomerSelectionWindow extends JFrame {
 				updateButtons();
 		} };
 	}
-	private ActionListener selectButtonActionListener() {
-		return new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new CustomerSelectionCheckboxWindow(null);
-			}
-		};
-	}
 	private ActionListener prevButtonActionListener() {
 		return new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
@@ -151,16 +146,23 @@ public class CustomerSelectionWindow extends JFrame {
 				updateButtons();
 		} };
 	}
-	private ActionListener personButtonActionListener(UUID uuid) {
-		return new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) {
-				new DataInputWindow(Lobby.getCustomerByUUID(uuid));
-				
-		} };
-	}
+	
 	private ActionListener exitButtonActionListener() {
 		return new ActionListener() {
-			@Override public void actionPerformed(ActionEvent arg0) { toCloseInfoWindow();
+			@Override public void actionPerformed(ActionEvent arg0) { me.dispose();
+		} };
+	}
+	private ActionListener goButtonActionListener() {
+		return new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				WaitingRoom r = new WaitingRoom();
+				for (Map.Entry<UUID, JCheckBox> e : personButtons.entrySet()) {
+				    if(e.getValue().isSelected()) {
+				    	r.add(customers.getCustomerByUUID(e.getKey()));
+				    }
+				}
+				new CustomerSelectionWindow(r);
+				me.dispose();
 		} };
 	}
 	

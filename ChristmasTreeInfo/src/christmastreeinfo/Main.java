@@ -44,7 +44,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		
-		CustomerSelectionWindow csw = new CustomerSelectionWindow();
+		CustomerSelectionWindow csw = new CustomerSelectionWindow(null);
 		//DataInputWindow dw = new DataInputWindow(ben);
 				
 	}
