@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 
 import christmastreeinfo.Lang;
 import christmastreeinfo.Main;
-import christmastreeinfo.PersonFactory;
 import christmastreeinfo.WaitingRoom;
 import customer.Customer;
 import customer.DataType;
