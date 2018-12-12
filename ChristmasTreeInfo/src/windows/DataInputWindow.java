@@ -19,11 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
+import christmastreeinfo.Keys;
 import christmastreeinfo.Lang;
 import customer.Customer;
 import customer.DataPoint;
 import customer.DataType;
-import customer.Keys;
 import customer.SaveDataConverter;
 
 public class DataInputWindow extends JFrame {
@@ -290,7 +290,7 @@ public class DataInputWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(saveButton.isEnabled()) {
-					new InfoWindow(Lang.CLOSE_MSG, Lang.PROGRAM_NAME,
+					new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.CANCEL, Lang.PROGRAM_NAME,
 							new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { endEditing(); update(); } }, true),
 							new InfoWindowButton(Lang.NO, null, true));
 				} else {

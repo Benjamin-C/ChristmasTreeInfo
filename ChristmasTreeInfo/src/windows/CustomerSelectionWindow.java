@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import christmastreeinfo.Lang;
+import christmastreeinfo.Main;
 import christmastreeinfo.PersonFactory;
 import christmastreeinfo.WaitingRoom;
 import customer.Customer;
@@ -31,6 +32,7 @@ public class CustomerSelectionWindow extends JFrame {
 	private JPanel controlButtonPanel;
 	private JButton nextbutton;
 	private JButton prevButton;
+	private JButton exitButton;
 	
 	private int customerStartIndex;
 	private int customerSeeSize = 8;
@@ -61,7 +63,6 @@ public class CustomerSelectionWindow extends JFrame {
 			personButtonPanel[i] = new JPanel();
 			personButtonPanel[i].setLayout(new BoxLayout(personButtonPanel[i], BoxLayout.Y_AXIS));
 			people.add(personButtonPanel[i]);
-			System.out.println(personButtonPanel[i]);
 		}
 		for(JPanel jp:personButtonPanel) {
 			System.out.println(jp);
@@ -77,6 +78,9 @@ public class CustomerSelectionWindow extends JFrame {
 		nextbutton = new JButton(Lang.NEXT);
 		nextbutton.addActionListener(nextButtonActionListener());
 		controlButtonPanel.add(nextbutton);
+		exitButton = new JButton(Lang.EXIT);
+		exitButton.addActionListener(exitButtonActionListener());
+		controlButtonPanel.add(exitButton);
 		
 		main.add(controlButtonPanel);
 		
@@ -131,6 +135,17 @@ public class CustomerSelectionWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				new DataInputWindow(WaitingRoom.getCustomerByUUID(uuid));
+			}
+		};
+	}
+	private ActionListener exitButtonActionListener() {
+		return new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.EXIT, Lang.PROGRAM_NAME,
+					new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { Main.exit(); } }),
+					new InfoWindowButton(Lang.NO, null));
 			}
 		};
 	}

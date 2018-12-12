@@ -14,7 +14,6 @@ import java.util.Scanner;
 import benjaminc.util.TracedPrintStream;
 import customer.Customer;
 import customer.DataType;
-import customer.Keys;
 import windows.CustomerSelectionWindow;
 
 public class Main {
@@ -35,6 +34,23 @@ public class Main {
 		List<Customer> cal = new ArrayList<Customer>();
 		int count = 64;
 		cal.add(ben);
+		
+		File customerFile = new File(Keys.DATA_FILE);
+
+		try {
+			WaitingRoom.addCustomersFromFile(customerFile);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		CustomerSelectionWindow csw = new CustomerSelectionWindow();
+		//DataInputWindow dw = new DataInputWindow(ben);
+				
+	}
+
+	@SuppressWarnings("unused")
+	private static void generateCustomers(List<Customer> cal, int count) {
 		try {
 			PersonFactory pf = new PersonFactory(new File("people.txt"));
 			for(int i = 0; i < count; i++) {
@@ -47,11 +63,18 @@ public class Main {
 			}
 		}
 		WaitingRoom.addAll(cal);
-		CustomerSelectionWindow csw = new CustomerSelectionWindow();
-		//DataInputWindow dw = new DataInputWindow(ben);
-				
+		File customerFile = new File(Keys.DATA_FILE);
+		try {
+			WaitingRoom.saveCustomersToFile(customerFile);
+			WaitingRoom.clear(true);
+			WaitingRoom.addCustomersFromFile(customerFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
-
+	
+	@SuppressWarnings("unused")
 	@Deprecated
 	private List<Customer> oldGeneration(int pplcount) {
 		List<Customer> cal = new ArrayList<Customer>();
@@ -90,5 +113,18 @@ public class Main {
 			}
 		}
 		return cal;
+	}
+	
+	public static void exit() {
+		exit(0);
+	}
+	public static void exit(int status) {
+		try {
+			WaitingRoom.saveCustomersToFile(new File(Keys.DATA_FILE));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.exit(status);
 	}
 }

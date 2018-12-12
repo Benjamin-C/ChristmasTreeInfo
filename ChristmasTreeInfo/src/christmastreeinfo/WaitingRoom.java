@@ -1,7 +1,12 @@
 package christmastreeinfo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.UUID;
 
 import customer.Customer;
@@ -92,5 +97,61 @@ public class WaitingRoom {
 	 */
 	public static int lastindex() {
 		return customers.size() - 1;
+	}
+	
+	/**
+	 * Remove all customers from the room if verify = true;
+	 * @param verify a Boolean to verify the remove. If false, nothing happens
+	 */
+	public static void clear(boolean verify) {
+		if(verify) {
+			customers.clear();
+		}
+	}
+	/**
+	 * Remove a customer by object
+	 * @param c the Customer to remove
+	 */
+	public static void remove(Customer c) {
+		customers.remove(c);
+	}
+	/**
+	 * Removes a customer by UUID
+	 * @param uuid the UUID of the customer to remove
+	 */
+	public static void remove(UUID uuid) {
+		customers.remove(getCustomerByUUID(uuid));
+	}
+	/**
+	 * Saves all customers to a file
+	 * @param f the File to save customers to
+	 * @throws IOException if there is an IO error
+	 */
+	public static void saveCustomersToFile(File f) throws IOException {
+		FileWriter fw = new FileWriter(f);
+		fw.write(Keys.DATA_VALIDATION_KEY + "\n");
+		for(Customer c : customers) {
+			fw.write(c.toJson() + "\n");
+		}
+		fw.flush();
+		fw.close();
+	}
+	/**
+	 * Adds all people from a file to the WaitingRoom
+	 * @param f the File to get people from
+	 * @throws FileNotFoundException if the file does not exist or is not a CustomerData file
+	 */
+	public static void addCustomersFromFile(File f) throws FileNotFoundException {
+		Scanner s = new Scanner(f);
+		if(s.nextLine().equals(Keys.DATA_VALIDATION_KEY)) {
+			while(s.hasNextLine()) {
+				add(Customer.getCustomerFromJSON(s.nextLine()));
+			}
+		} else {
+			s.close();
+			// This will happen if the data validation key is missing
+			throw new FileNotFoundException("The provided file is not a customer save file");
+		}
+		s.close();
 	}
 }

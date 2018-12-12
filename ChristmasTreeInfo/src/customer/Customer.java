@@ -104,8 +104,6 @@ public class Customer {
 	
 	public static Customer getCustomerFromJSON(String json) {
 		Customer out = new Customer();
-		
-		System.out.println(json);
 
 		JsonParser jp = new JsonParser();
 		JsonObject jo = jp.parse(json).getAsJsonObject();
@@ -114,7 +112,6 @@ public class Customer {
 			DataType dt = SaveDataConverter.getDataTypeFromString(entry.getKey());
 			if(dt != null) {
 				out.set(dt, SaveDataConverter.getFromString(entry.getValue().getAsString(), dt));
-				System.out.println(entry.getValue() + " " + entry.getKey());
 			}
 		}
 		return out;

@@ -7,7 +7,7 @@ public class Lang {
 	public static final String EDIT_LOCKED_MSG = "This file is locked. Please\nask the admin if you\nthink this is an error.";
 	public static final String EDIT_NOT_SAVED_MSG = "Please save before closing";
 	public static final String SCEDULE_NOT_SAVED_MSG = "Please save the scedule\nbefore exiting";
-	public static final String CLOSE_MSG = "Are you sure you\nwant to cancel?";
+	public static final String ARE_YOU_SURE_MSG = "Are you sure you\nwant to ";
 	public static final String NAME = "Name";
 	public static final String PHONE_NUMBER = "Phone Number";
 	public static final String ADDRESS = "Address";
