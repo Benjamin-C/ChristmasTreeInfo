@@ -178,6 +178,7 @@ public class DataInputWindow extends JFrame {
 		this.add(master);
 		this.validate();
 		this.pack();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	
@@ -187,7 +188,6 @@ public class DataInputWindow extends JFrame {
 		}
 		System.out.println("Update");
 		for(JRadioButton jb : dateBox) {
-			System.out.println(jb.getActionCommand() + " " + cst.get(DataType.PICKUP_DATE));
 			if(jb.getActionCommand().equals(cst.get(DataType.PICKUP_DATE))) {
 				jb.setSelected(true);
 				System.out.println("Match");
@@ -255,10 +255,10 @@ public class DataInputWindow extends JFrame {
 					btn.nextElement().setEnabled(false);
 				}
 			} else {
-				new InfoWindow(Lang.CONCURRENT_EDIT_MSG, Lang.PROGRAM_NAME);
+				new InfoWindow(Lang.CONCURRENT_EDIT_MSG, Lang.PROGRAM_NAME, this);
 			}
 		} else {
-			new InfoWindow(Lang.EDIT_LOCKED_MSG, Lang.PROGRAM_NAME);
+			new InfoWindow(Lang.EDIT_LOCKED_MSG, Lang.PROGRAM_NAME, this);
 		}
 	}
 	private void endEditing() {
@@ -315,7 +315,7 @@ public class DataInputWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(saveButton.isEnabled()) {
-					new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.CANCEL, Lang.PROGRAM_NAME,
+					new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.CANCEL, Lang.PROGRAM_NAME, me,
 							new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { endEditing(); update(); } }, true),
 							new InfoWindowButton(Lang.NO, null, true));
 				} else {
@@ -330,13 +330,12 @@ public class DataInputWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				if(dateButtonGroup.getSelection() != null && timesButtonGroup.getSelection() != null) {
-					cst.set(DataType.PICKUP_DATE, dates[Integer.parseInt(dateButtonGroup.getSelection().getActionCommand())]);
-					cst.set(DataType.PICKUP_TIME, times[Integer.parseInt(timesButtonGroup.getSelection().getActionCommand())]);
-					new InfoWindow(Lang.SCEDULED, Lang.PROGRAM_NAME);
+					cst.set(DataType.PICKUP_DATE, dateButtonGroup.getSelection().getActionCommand());
+					cst.set(DataType.PICKUP_TIME, timesButtonGroup.getSelection().getActionCommand());
+					new InfoWindow(Lang.SCEDULED, Lang.PROGRAM_NAME, me);
 				} else {
-					new InfoWindow(Lang.SET_DATE_AND_TIME_MSG, Lang.PROGRAM_NAME);
+					new InfoWindow(Lang.SET_DATE_AND_TIME_MSG, Lang.PROGRAM_NAME, me);
 				}
 			}
 		};
@@ -347,7 +346,6 @@ public class DataInputWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				update();
 			}
 		};
@@ -357,9 +355,8 @@ public class DataInputWindow extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
 				if(editButton.isEnabled() != true) {
-					new InfoWindow(Lang.EDIT_NOT_SAVED_MSG, Lang.PROGRAM_NAME);
+					new InfoWindow(Lang.EDIT_NOT_SAVED_MSG, Lang.PROGRAM_NAME, me);
 				} else {
 					String date = "";
 					String time = "";
@@ -370,7 +367,7 @@ public class DataInputWindow extends JFrame {
 						time = timesButtonGroup.getSelection().getActionCommand();
 					}
 					if(!date.equals(cst.get(DataType.PICKUP_DATE)) || !time.equals(cst.get(DataType.PICKUP_TIME))) {
-						new InfoWindow(Lang.SCEDULE_NOT_SAVED_MSG, Lang.PROGRAM_NAME);
+						new InfoWindow(Lang.SCEDULE_NOT_SAVED_MSG, Lang.PROGRAM_NAME, me);
 					} else {
 						me.dispose();
 					}

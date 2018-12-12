@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 
 import christmastreeinfo.Lang;
 import christmastreeinfo.Main;
-import christmastreeinfo.WaitingRoom;
+import christmastreeinfo.Lobby;
 import customer.Customer;
 import customer.DataType;
 
@@ -68,9 +68,6 @@ public class CustomerSelectionWindow extends JFrame {
 			personButtonPanel[i].setLayout(new BoxLayout(personButtonPanel[i], BoxLayout.Y_AXIS));
 			people.add(personButtonPanel[i]);
 		}
-		for(JPanel jp:personButtonPanel) {
-			System.out.println(jp);
-		}
 		
 		main.add(people);
 		updateButtons();
@@ -94,13 +91,13 @@ public class CustomerSelectionWindow extends JFrame {
 		this.setVisible(true);
 	}
 	private void updatePartLabel() {
-		partLabel.setText(customerStartIndex + " - " + Math.min(WaitingRoom.size(), (customerStartIndex + customerSeeSize)) + " of " + WaitingRoom.size());
+		partLabel.setText(customerStartIndex + " - " + Math.min(Lobby.size(), (customerStartIndex + customerSeeSize - 1)) + Lang.OF + Lobby.lastindex());
 	}
 	private void updateButtons() {
 		for(int i = 0; i < colums; i++) {
 			personButtonPanel[i].removeAll();
-			for(int j = customerStartIndex + (customerSeeSize / colums * i); j < Math.min((customerStartIndex + (customerSeeSize / colums * i) + (customerSeeSize / colums)), WaitingRoom.size()); j++) {
-				makePersonButton(WaitingRoom.getCustomerBySpot(j), personButtonPanel[i]);
+			for(int j = customerStartIndex + (customerSeeSize / colums * i); j < Math.min((customerStartIndex + (customerSeeSize / colums * i) + (customerSeeSize / colums)), Lobby.size()); j++) {
+				makePersonButton(Lobby.getCustomerBySpot(j), personButtonPanel[i]);
 			}
 		}
 		updatePartLabel();
@@ -116,92 +113,47 @@ public class CustomerSelectionWindow extends JFrame {
 	
 	private ActionListener nextButtonActionListener() {
 		return new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				customerStartIndex = Math.min((customerStartIndex + customerSeeSize), (WaitingRoom.lastindex() - customerSeeSize + 1));
+			@Override public void actionPerformed(ActionEvent arg0) {
+				if(customerStartIndex + customerSeeSize <= Lobby.lastindex()) {
+					customerStartIndex = customerStartIndex + customerSeeSize;
+				}
 				updateButtons();
-			}
-		};
+		} };
 	}
 	private ActionListener prevButtonActionListener() {
 		return new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			@Override public void actionPerformed(ActionEvent arg0) {
 				customerStartIndex = Math.max((customerStartIndex - customerSeeSize), 0);
 				updateButtons();
-			}
-		};
+		} };
 	}
 	private ActionListener personButtonActionListener(UUID uuid) {
 		return new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				new DataInputWindow(WaitingRoom.getCustomerByUUID(uuid));
-			}
-		};
+			@Override public void actionPerformed(ActionEvent arg0) {
+				new DataInputWindow(Lobby.getCustomerByUUID(uuid));
+		} };
 	}
 	private ActionListener exitButtonActionListener() {
 		return new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				toCloseInfoWindow();
-			}
-		};
+			@Override public void actionPerformed(ActionEvent arg0) { toCloseInfoWindow();
+		} };
 	}
 	
 	private void toCloseInfoWindow() {
-		new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.EXIT.toLowerCase(), Lang.PROGRAM_NAME,
+		new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.EXIT.toLowerCase(), Lang.PROGRAM_NAME, this,
 					new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { Main.exit(); } }),
 					new InfoWindowButton("Hard", new Runnable() { @Override public void run() { System.exit(1); } }),
 					new InfoWindowButton(Lang.NO, null, true));
 	}
 	private WindowListener getWindowListener() {
 		return new WindowListener() {
-			
-			@Override
-			public void windowOpened(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowIconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeiconified(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowDeactivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowClosing(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				toCloseInfoWindow();
-			}
-			
-			@Override
-			public void windowClosed(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void windowActivated(WindowEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			@Override public void windowOpened(WindowEvent arg0) { }
+			@Override public void windowIconified(WindowEvent arg0) { }
+			@Override public void windowDeiconified(WindowEvent arg0) { }
+			@Override public void windowDeactivated(WindowEvent arg0) { }
+			@Override public void windowClosing(WindowEvent arg0) { toCloseInfoWindow(); }
+			@Override public void windowClosed(WindowEvent arg0) { }
+			@Override public void windowActivated(WindowEvent arg0) { }
 		};
 	}
 }

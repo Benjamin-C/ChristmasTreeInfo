@@ -18,10 +18,10 @@ public class InfoWindow extends JFrame {
 	 */
 	private static final long serialVersionUID = -4564265207005050986L;
 	
-	public InfoWindow(String text, String title) {
-		this(text, title, (InfoWindowButton[]) null);
-	}
 	public InfoWindow(String text, String title, InfoWindowButton... buttons) {
+		this(text, title, null, buttons);
+	}
+	public InfoWindow(String text, String title, JFrame relitive, InfoWindowButton... buttons) {
 		JFrame me = this;
 		if(buttons == null || buttons.length == 0) {
 			buttons = new InfoWindowButton[1];
@@ -59,6 +59,7 @@ public class InfoWindow extends JFrame {
 		this.setTitle(title);
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.pack();
+		this.setLocationRelativeTo(relitive);
 		this.setVisible(true);
 	}
 }

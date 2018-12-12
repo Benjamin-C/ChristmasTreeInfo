@@ -12,7 +12,7 @@ import java.util.UUID;
 import customer.Customer;
 import customer.DataType;
 
-public class WaitingRoom {
+public class Lobby {
 
 	private static List<Customer> customers = new ArrayList<Customer>();
 	

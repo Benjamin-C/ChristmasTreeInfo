@@ -38,7 +38,7 @@ public class Main {
 		File customerFile = new File(Keys.DATA_FILE);
 
 		try {
-			WaitingRoom.addCustomersFromFile(customerFile);
+			Lobby.addCustomersFromFile(customerFile);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,12 +62,12 @@ public class Main {
 				cal.add(Customer.getRandomCustomer());
 			}
 		}
-		WaitingRoom.addAll(cal);
+		Lobby.addAll(cal);
 		File customerFile = new File(Keys.DATA_FILE);
 		try {
-			WaitingRoom.saveCustomersToFile(customerFile);
-			WaitingRoom.clear(true);
-			WaitingRoom.addCustomersFromFile(customerFile);
+			Lobby.saveCustomersToFile(customerFile);
+			Lobby.clear(true);
+			Lobby.addCustomersFromFile(customerFile);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -120,7 +120,7 @@ public class Main {
 	}
 	public static void exit(int status) {
 		try {
-			WaitingRoom.saveCustomersToFile(new File(Keys.DATA_FILE));
+			Lobby.saveCustomersToFile(new File(Keys.DATA_FILE));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
