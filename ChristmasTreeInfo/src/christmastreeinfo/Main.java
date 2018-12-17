@@ -52,7 +52,7 @@ public class Main {
 	@SuppressWarnings("unused")
 	private static void generateCustomers(List<Customer> cal, int count) {
 		try {
-			PersonFactory pf = new PersonFactory(new File("people.txt"));
+			RandomPersonFactory pf = new RandomPersonFactory(new File("people.txt"));
 			for(int i = 0; i < count; i++) {
 				cal.add(pf.getCustomer());
 			}

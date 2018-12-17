@@ -29,7 +29,7 @@ public class CustomerSelectionCheckboxWindow extends JFrame {
 	private JPanel main;
 	
 	private JPanel personButtonPanel[];
-	private HashMap<UUID, JCheckBox> personButtons;
+	private HashMap<UUID, JCheckBox> personCheckboxes;
 	
 	private JLabel partLabel;
 	
@@ -58,7 +58,7 @@ public class CustomerSelectionCheckboxWindow extends JFrame {
 		
 		this.addWindowListener(getWindowListener());
 		
-		personButtons = new HashMap<UUID, JCheckBox>();
+		personCheckboxes = new HashMap<UUID, JCheckBox>();
 		personButtonPanel = new JPanel[colums];
 		customerStartIndex = 0;
 		customerSeeSize = customerSeeSize * colums;
@@ -121,12 +121,12 @@ public class CustomerSelectionCheckboxWindow extends JFrame {
 		this.pack();
 	}
 	private void makePersonButton(Customer c, JPanel panel) {
-		if(personButtons.containsKey(c.getraw(DataType.UUID))) {
-			panel.add(personButtons.get(c.getraw(DataType.UUID)));
+		if(personCheckboxes.containsKey(c.getraw(DataType.UUID))) {
+			panel.add(personCheckboxes.get(c.getraw(DataType.UUID)));
 		} else {
 			JCheckBox ckbx = new JCheckBox(c.get(DataType.NAME));
 			panel.add(ckbx);
-			personButtons.put((UUID) c.getraw(DataType.UUID), ckbx);
+			personCheckboxes.put((UUID) c.getraw(DataType.UUID), ckbx);
 		}
 	}
 	
@@ -156,7 +156,7 @@ public class CustomerSelectionCheckboxWindow extends JFrame {
 		return new ActionListener() {
 			@Override public void actionPerformed(ActionEvent arg0) {
 				WaitingRoom r = new WaitingRoom();
-				for (Map.Entry<UUID, JCheckBox> e : personButtons.entrySet()) {
+				for (Map.Entry<UUID, JCheckBox> e : personCheckboxes.entrySet()) {
 				    if(e.getValue().isSelected()) {
 				    	r.add(customers.getCustomerByUUID(e.getKey()));
 				    }

@@ -14,7 +14,7 @@ import java.util.Scanner;
 import customer.Customer;
 import customer.DataType;
 
-public class PersonFactory {
+public class RandomPersonFactory {
 	
 	private List<String> name1;
 	private List<String> name2;
@@ -25,7 +25,7 @@ public class PersonFactory {
 	private Scanner scan;
 	private int filesize;
 	
-	public PersonFactory(File f) throws FileNotFoundException {
+	public RandomPersonFactory(File f) throws FileNotFoundException {
 		Path path = Paths.get(f.getPath());
 		int lineCount = 0;
 		try {

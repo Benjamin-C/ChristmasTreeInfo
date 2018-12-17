@@ -39,6 +39,7 @@ public class Lang {
 	public static final String NO = "No";
 	public static final String OF = "of";
 	public static final String SELECT = "Select";
+	public static final String REMOVE = "Remove";
 	
 	// Date configuration values
 	public static final String DEFAULT_DATES[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "Any"};

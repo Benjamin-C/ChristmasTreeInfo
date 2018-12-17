@@ -5,10 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -28,6 +30,7 @@ public class CustomerSelectionWindow extends JFrame {
 	
 	private JPanel personButtonPanel[];
 	private HashMap<UUID, JButton> personButtons;
+	private HashMap<UUID, JCheckBox> personCheckboxes;
 	
 	private JLabel partLabel;
 	
@@ -36,10 +39,17 @@ public class CustomerSelectionWindow extends JFrame {
 	private JButton nextbutton;
 	private JButton prevButton;
 	private JButton exitButton;
+	private JButton goButton;
+	private JButton deleteButton;
 	
 	private int customerStartIndex;
 	private int customerSeeSize = 8;
 	private int colums = 3;
+	
+	private boolean selectingMode;
+	
+	@SuppressWarnings("unused")
+	private JFrame me;
 	
 	private WaitingRoom customers;
 	
@@ -47,6 +57,7 @@ public class CustomerSelectionWindow extends JFrame {
 		this(new WaitingRoom(Lobby.getAllCustomers()));
 	}
 	public CustomerSelectionWindow(WaitingRoom customers) {
+		me = this;
 		if(customers == null) {
 			customers = new WaitingRoom(Lobby.getAllCustomers());
 		}
@@ -58,6 +69,8 @@ public class CustomerSelectionWindow extends JFrame {
 		this.addWindowListener(getWindowListener());
 		
 		personButtons = new HashMap<UUID, JButton>();
+		personCheckboxes = new HashMap<UUID, JCheckBox>();
+		
 		personButtonPanel = new JPanel[colums];
 		customerStartIndex = 0;
 		customerSeeSize = customerSeeSize * colums;
@@ -97,6 +110,14 @@ public class CustomerSelectionWindow extends JFrame {
 		exitButton = new JButton(Lang.EXIT);
 		exitButton.addActionListener(exitButtonActionListener());
 		controlButtonPanel.add(exitButton);
+		goButton = new JButton(Lang.GO);
+		goButton.addActionListener(goButtonActionListener());
+		goButton.setEnabled(false);
+		controlButtonPanel.add(goButton);
+		deleteButton = new JButton(Lang.REMOVE);
+		deleteButton.addActionListener(deleteButtonActionListener());
+		deleteButton.setEnabled(false);
+		controlButtonPanel.add(deleteButton);
 		
 		main.add(controlButtonPanel);
 		
@@ -120,10 +141,20 @@ public class CustomerSelectionWindow extends JFrame {
 		this.pack();
 	}
 	private void makePersonButton(Customer c, JPanel panel) {
-		JButton btn = new JButton(c.get(DataType.NAME));
-		btn.addActionListener(personButtonActionListener((UUID) c.getraw(DataType.UUID))); 
-		panel.add(btn);
-		personButtons.put((UUID) c.getraw(DataType.UUID), btn);
+		if(selectingMode) {
+			if(personCheckboxes.containsKey(c.getraw(DataType.UUID))) {
+				panel.add(personCheckboxes.get(c.getraw(DataType.UUID)));
+			} else {
+				JCheckBox ckbx = new JCheckBox(c.get(DataType.NAME));
+				panel.add(ckbx);
+				personCheckboxes.put((UUID) c.getraw(DataType.UUID), ckbx);
+			}
+		} else {
+			JButton btn = new JButton(c.get(DataType.NAME));
+			btn.addActionListener(personButtonActionListener((UUID) c.getraw(DataType.UUID))); 
+			panel.add(btn);
+			personButtons.put((UUID) c.getraw(DataType.UUID), btn);
+		}
 	}
 	
 	private ActionListener nextButtonActionListener() {
@@ -135,12 +166,33 @@ public class CustomerSelectionWindow extends JFrame {
 				updateButtons();
 		} };
 	}
+	private void startSelecting() {
+		selectingMode = true;
+		goButton.setEnabled(true);
+		deleteButton.setEnabled(true);
+		selectButton.setText(Lang.CANCEL);
+		updateButtons();
+	}
+	private void stopSelecting() {
+		selectingMode = false;
+		goButton.setEnabled(false);
+		deleteButton.setEnabled(false);
+		selectButton.setText(Lang.SELECT);
+		for (Map.Entry<UUID, JCheckBox> e : personCheckboxes.entrySet()) {
+			e.getValue().setSelected(false);
+		}
+		updateButtons();
+	}
 	private ActionListener selectButtonActionListener() {
 		return new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new CustomerSelectionCheckboxWindow(null);
+				if(selectingMode) {
+					stopSelecting();
+				} else {
+					startSelecting();
+				}
 			}
 		};
 	}
@@ -163,11 +215,35 @@ public class CustomerSelectionWindow extends JFrame {
 			@Override public void actionPerformed(ActionEvent arg0) { toCloseInfoWindow();
 		} };
 	}
-	
+	private ActionListener goButtonActionListener() {
+		return new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				WaitingRoom r = new WaitingRoom();
+				for (Map.Entry<UUID, JCheckBox> e : personCheckboxes.entrySet()) {
+				    if(e.getValue().isSelected()) {
+				    	r.add(customers.getCustomerByUUID(e.getKey()));
+				    }
+				}
+				new CustomerSelectionWindow(r);
+				stopSelecting();
+		} };
+	}
+	private ActionListener deleteButtonActionListener() {
+		return new ActionListener() {
+			@Override public void actionPerformed(ActionEvent arg0) {
+				for (Map.Entry<UUID, JCheckBox> e : personCheckboxes.entrySet()) {
+				    if(e.getValue().isSelected()) {
+				    	customers.remove(e.getKey());
+				    }
+				}
+				stopSelecting();
+		} };
+	}
 	private void toCloseInfoWindow() {
 		new InfoWindow(Lang.ARE_YOU_SURE_MSG + Lang.EXIT.toLowerCase(), Lang.PROGRAM_NAME, this,
 					new InfoWindowButton(Lang.YES, new Runnable() { @Override public void run() { Main.exit(); } }),
 					new InfoWindowButton("Hard", new Runnable() { @Override public void run() { System.exit(1); } }),
+					new InfoWindowButton("This", new Runnable() { @Override public void run() { me.dispose(); } }, true),
 					new InfoWindowButton(Lang.NO, null, true));
 	}
 	private WindowListener getWindowListener() {

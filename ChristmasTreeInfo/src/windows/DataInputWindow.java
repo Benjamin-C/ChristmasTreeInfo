@@ -186,11 +186,9 @@ public class DataInputWindow extends JFrame {
 		for (Map.Entry<DataType, JTextArea> e : dataMap.entrySet()) {
 		    e.getValue().setText(cst.get(e.getKey()).toString());
 		}
-		System.out.println("Update");
 		for(JRadioButton jb : dateBox) {
 			if(jb.getActionCommand().equals(cst.get(DataType.PICKUP_DATE))) {
 				jb.setSelected(true);
-				System.out.println("Match");
 			}
 		}
 		for(JRadioButton jb : timesBox) {
